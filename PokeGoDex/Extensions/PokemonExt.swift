@@ -43,6 +43,22 @@ extension Pokemon {
     var highestStat: Stat {
         stats.max { $0.value < $1.value }!
     }
+    
+    var spriteImage: Image {
+        if let data = sprite, let image = UIImage(data: data) {
+            Image(uiImage: image)
+        } else {
+            Image(.bulbasaur)
+        }
+    }
+    
+    var shinyImage: Image {
+        if let data = shiny, let image = UIImage(data: data) {
+            Image(uiImage: image)
+        } else {
+            Image(.shinybulbasaur)
+        }
+    }
 }
 
 struct Stat: Identifiable {
