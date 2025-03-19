@@ -46,6 +46,10 @@ struct PersistenceController {
         container = NSPersistentContainer(name: "PokeGoDex")
         if inMemory {
             container.persistentStoreDescriptions.first!.url = URL(fileURLWithPath: "/dev/null")
+        } else {
+            container.persistentStoreDescriptions.first!.url = FileManager.default
+                .containerURL(forSecurityApplicationGroupIdentifier: "group.com.faketrue.pokegroup")!
+                .appending(path: "PokeGoDex.sqlite")
         }
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
             if let error = error as NSError? {
