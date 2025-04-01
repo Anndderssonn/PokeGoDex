@@ -13,6 +13,7 @@ struct ContentView: View {
     @Query(sort: \Pokemon.id, animation: .default) private var pokedex: [Pokemon]
     @State private var searchText = ""
     @State private var filterByFavorites = false
+    @State private var showShiny = false
     let fetcher = FetchPokemon()
     private var dynamicPredicate: Predicate<Pokemon> {
         #Predicate<Pokemon> { pokemon in
@@ -46,8 +47,8 @@ struct ContentView: View {
                     Section {
                         ForEach((try? pokedex.filter(dynamicPredicate)) ?? pokedex) { pokemon in
                             NavigationLink(value: pokemon) {
-                                if  pokemon.sprite == nil {
-                                    AsyncImage(url: pokemon.spriteURL) { image in
+                                if  pokemon.sprite == nil || pokemon.shiny == nil {
+                                    AsyncImage(url: showShiny ? pokemon.shinyURL : pokemon.spriteURL) { image in
                                         image
                                             .resizable()
                                             .scaledToFit()
@@ -56,7 +57,7 @@ struct ContentView: View {
                                     }
                                     .frame(width: 100, height: 100)
                                 } else {
-                                    pokemon.spriteImage
+                                    (showShiny ? pokemon.shinyImage : pokemon.spriteImage)
                                         .resizable()
                                         .scaledToFit()
                                         .frame(width: 100, height: 100)
@@ -120,6 +121,14 @@ struct ContentView: View {
                     PokemonDetail(pokemon: pokemon)
                 }
                 .toolbar {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button {
+                            showShiny.toggle()
+                        } label: {
+                            Image(systemName: showShiny ? "wand.and.stars" : "wand.and.stars.inverse")
+                                .tint(showShiny ? .yellow : .primary)
+                        }
+                    }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button {
                             withAnimation {
